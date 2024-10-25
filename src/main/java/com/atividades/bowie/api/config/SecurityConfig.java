@@ -15,8 +15,8 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable()) // Desativa CSRF
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/auth/register").permitAll() // Permite acesso ao endpoint de registro
-                        .requestMatchers("/auth/login").permitAll() // Permite acesso ao endpoint de login
+                        .requestMatchers("/auth/**").permitAll() // Permite acesso aos endpoints de autenticação
+                        .requestMatchers("/activity/**").permitAll() // Permite acesso aos endpoints de atividades
                         .anyRequest().authenticated() // Exige autenticação para todas as outras rotas
                 );
 
