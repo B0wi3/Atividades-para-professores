@@ -28,7 +28,8 @@ public class SecurityConfig {
     private static final String[] WHITE_LIST_URL = {
             "/auth/register",
             "/auth/login",
-            "/activity/**"
+            "/activity/all",
+            "/activity/category/**"
     };
 
     @Bean
