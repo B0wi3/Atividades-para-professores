@@ -3,10 +3,11 @@ package com.atividades.bowie.service;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCrypt;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
-public class EncryptionService {
+public class EncryptionService implements PasswordEncoder {
 
     @Value("${encryption.salt.rounds}")
     private int saltRounds;
@@ -25,4 +26,13 @@ public class EncryptionService {
         return BCrypt.checkpw(password, hash);
     }
 
+    @Override
+    public String encode(CharSequence rawPassword) {
+        return "";
+    }
+
+    @Override
+    public boolean matches(CharSequence rawPassword, String encodedPassword) {
+        return false;
+    }
 }

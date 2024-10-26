@@ -1,12 +1,10 @@
 package com.atividades.bowie.service;
 
-import com.atividades.bowie.api.model.CreateBody;
 import com.atividades.bowie.exception.ActivityAlreadyExistsException;
 import com.atividades.bowie.model.Activity;
 import com.atividades.bowie.model.dao.ActivityDAO;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service

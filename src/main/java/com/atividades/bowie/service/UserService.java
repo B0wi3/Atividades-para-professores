@@ -14,10 +14,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserService implements UserDetailsService {
 
+    private JwtService  jwtService;
     private LocalUserDAO localUserDAO;
     private EncryptionService encryptionService;
 
-    public UserService(LocalUserDAO localUserDAO, EncryptionService encryptionService) {
+    public UserService(JwtService jwtService, LocalUserDAO localUserDAO, EncryptionService encryptionService) {
+        this.jwtService = jwtService;
         this.localUserDAO = localUserDAO;
         this.encryptionService = encryptionService;
     }
@@ -35,17 +37,20 @@ public class UserService implements UserDetailsService {
         return localUserDAO.save(user);
     }
 
-    public LocalUser loginUser(LoginBody loginBody) throws UsernameNotFoundException, IncorrectPasswordException {
+    public String loginUser(LoginBody loginBody) throws UsernameNotFoundException, IncorrectPasswordException {
         LocalUser user = localUserDAO.findByUsernameIgnoreCase(loginBody.getUsername())
                 .orElseThrow(() -> new UsernameNotFoundException("Username not found: " + loginBody.getUsername()));
         if (!encryptionService.verifyPassword(loginBody.getPassword(), user.getPassword())) {
             throw new IncorrectPasswordException("Incorrect password for user: " + user.getUsername());
         }
-        return user;
+        String jwtToken = jwtService.generateToken(user);
+        return jwtToken;
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws org.springframework.security.core.userdetails.UsernameNotFoundException {
-        return null;
+        LocalUser user = localUserDAO.findByUsernameIgnoreCase(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
+        return user;
     }
 }

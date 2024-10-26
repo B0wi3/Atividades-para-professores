@@ -37,8 +37,8 @@ public class AuthenticationController {
     public ResponseEntity<?> loginUser(@RequestBody LoginBody loginBody) {
         System.out.println("Requisição recebida: " + loginBody);
         try {
-            LocalUser user = userService.loginUser(loginBody);
-            return ResponseEntity.ok(user);
+            String token = userService.loginUser(loginBody);
+            return ResponseEntity.ok(token);
         } catch (UsernameNotFoundException ex) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
         } catch (IncorrectPasswordException ex) {
