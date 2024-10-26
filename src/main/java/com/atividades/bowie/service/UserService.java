@@ -7,10 +7,12 @@ import com.atividades.bowie.exception.UserAlreadyExistsException;
 import com.atividades.bowie.exception.UsernameNotFoundException;
 import com.atividades.bowie.model.LocalUser;
 import com.atividades.bowie.model.dao.LocalUserDAO;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UserService {
+public class UserService implements UserDetailsService {
 
     private LocalUserDAO localUserDAO;
     private EncryptionService encryptionService;
@@ -42,4 +44,8 @@ public class UserService {
         return user;
     }
 
+    @Override
+    public UserDetails loadUserByUsername(String username) throws org.springframework.security.core.userdetails.UsernameNotFoundException {
+        return null;
+    }
 }
