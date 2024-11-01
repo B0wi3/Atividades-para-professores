@@ -21,9 +21,10 @@ public class ActivityController {
 
     @PostMapping("/create")
     public ResponseEntity<?> createActivity(@RequestBody Activity activity) throws ActivityAlreadyExistsException {
+        System.out.println("Atividade recebida: " + activity);
         try {
             Activity newActivity = activityService.createActivity(activity);
-            return ResponseEntity.ok(activity);
+            return ResponseEntity.ok(newActivity);
         } catch (ActivityAlreadyExistsException ex) {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }

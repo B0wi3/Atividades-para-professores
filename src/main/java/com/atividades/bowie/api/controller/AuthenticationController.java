@@ -12,6 +12,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @RestController
 @RequestMapping("/auth")
 public class AuthenticationController {
@@ -38,7 +41,9 @@ public class AuthenticationController {
         System.out.println("Requisição recebida: " + loginBody);
         try {
             String token = userService.loginUser(loginBody);
-            return ResponseEntity.ok(token);
+            Map<String, String> response = new HashMap<>();
+            response.put("token", token);
+            return ResponseEntity.ok(response);
         } catch (UsernameNotFoundException ex) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
         } catch (IncorrectPasswordException ex) {
