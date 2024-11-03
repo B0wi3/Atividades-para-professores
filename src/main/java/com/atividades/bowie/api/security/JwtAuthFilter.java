@@ -1,6 +1,7 @@
 package com.atividades.bowie.api.security;
 
 import com.atividades.bowie.service.JwtService;
+import com.atividades.bowie.service.TokenBlacklistService;
 import com.atividades.bowie.service.UserService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -22,6 +23,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
     private final UserService userService;
+    private final TokenBlacklistService tokenBlacklistService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -30,6 +32,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             String token = authHeader.substring(7);
             String username = jwtService.extractUsername(token);
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                if (tokenBlacklistService.isTokenBlacklisted(token)) {
+                    response.sendError(HttpServletResponse.SC_FORBIDDEN, "Token blacklisted.");
+                    return;
+                }
                 UserDetails user = userService.loadUserByUsername(username);
                 if (jwtService.validateToken(token, user)) {
                     UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
