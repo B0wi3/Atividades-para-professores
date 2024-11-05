@@ -1,6 +1,7 @@
 package com.atividades.bowie.service;
 
 import com.atividades.bowie.exception.ActivityAlreadyExistsException;
+import com.atividades.bowie.exception.UsernameNotFoundException;
 import com.atividades.bowie.model.Activity;
 import com.atividades.bowie.model.dao.ActivityDAO;
 import org.springframework.stereotype.Service;
@@ -30,5 +31,15 @@ public class ActivityService {
 
     public List<Activity> listByCategory(String category) {
         return activityDAO.findActivityByCategoryIgnoreCase(category);
+    }
+
+    public void deleteById(int id) {
+        activityDAO.deleteById(Long.valueOf(id));
+    }
+
+    private Activity findById(int id) {
+        Activity activity = activityDAO.findById(id)
+                .orElseThrow(() -> new UsernameNotFoundException("Activity not found."));
+        return activity;
     }
 }

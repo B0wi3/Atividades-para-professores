@@ -41,4 +41,10 @@ public class ActivityController {
         List<Activity> activities = activityService.listByCategory(category);
         return ResponseEntity.ok(activities);
     }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<HttpStatus> deleteActivity(@PathVariable int id) {
+        activityService.deleteById(id);
+        return ResponseEntity.ok().build();
+    }
 }

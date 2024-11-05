@@ -57,8 +57,19 @@ public class AuthenticationController {
 
     @PostMapping("/logout")
     public ResponseEntity<?> logoutUser(HttpServletRequest request) {
-        String token = request.getHeader("Authorization").substring("Bearer".length());
+        String authHeader = request.getHeader("Authorization");
+        String token = authHeader.substring(7);
         tokenBlacklistService.addToBlacklist(token);
-        return ResponseEntity.ok("Logout realizado");
+        return ResponseEntity.ok("Logout realizado " + token);
+    }
+
+    @GetMapping("/test")
+    public boolean isBlackListed(HttpServletRequest request) {
+        String authHeader = request.getHeader("Authorization");
+        String token = authHeader.substring(7);
+        if (tokenBlacklistService.isTokenBlacklisted(token)) {
+            return true;
+        }
+        return false;
     }
 }

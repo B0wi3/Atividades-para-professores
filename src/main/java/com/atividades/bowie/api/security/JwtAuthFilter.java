@@ -31,11 +31,12 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7);
             String username = jwtService.extractUsername(token);
+            if (tokenBlacklistService.isTokenBlacklisted(token)) {
+                System.out.println("Token blacklisted: " + token); // Log para depuração
+                response.sendError(HttpServletResponse.SC_FORBIDDEN, "Token blacklisted.");
+                return;
+            }
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                if (tokenBlacklistService.isTokenBlacklisted(token)) {
-                    response.sendError(HttpServletResponse.SC_FORBIDDEN, "Token blacklisted.");
-                    return;
-                }
                 UserDetails user = userService.loadUserByUsername(username);
                 if (jwtService.validateToken(token, user)) {
                     UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(

@@ -8,6 +8,8 @@ import java.util.Optional;
 
 public interface ActivityDAO extends CrudRepository<Activity, Long> {
 
+    Optional<Activity> findById(int id);
+
     Optional<Activity> findByActivityNameIgnoreCase(String name);
 
     Optional<Activity> findByDescriptionIgnoreCase(String description);
