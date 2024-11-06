@@ -6,16 +6,20 @@ import com.atividades.bowie.exception.IncorrectPasswordException;
 import com.atividades.bowie.exception.UserAlreadyExistsException;
 import com.atividades.bowie.exception.UsernameNotFoundException;
 import com.atividades.bowie.model.LocalUser;
+import com.atividades.bowie.service.JwtService;
 import com.atividades.bowie.service.TokenBlacklistService;
 import com.atividades.bowie.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/auth")
@@ -23,10 +27,12 @@ public class AuthenticationController {
 
     private UserService userService;
     private TokenBlacklistService tokenBlacklistService;
+    private JwtService jwtService;
 
-    public AuthenticationController(UserService userService, TokenBlacklistService tokenBlacklistService) {
+    public AuthenticationController(UserService userService, TokenBlacklistService tokenBlacklistService, JwtService jwtService) {
         this.userService = userService;
         this.tokenBlacklistService = tokenBlacklistService;
+        this.jwtService = jwtService;
     }
 
     @PostMapping("/register")
@@ -63,13 +69,13 @@ public class AuthenticationController {
         return ResponseEntity.ok("Logout realizado " + token);
     }
 
-    @GetMapping("/test")
-    public boolean isBlackListed(HttpServletRequest request) {
-        String authHeader = request.getHeader("Authorization");
-        String token = authHeader.substring(7);
-        if (tokenBlacklistService.isTokenBlacklisted(token)) {
-            return true;
+    @GetMapping("/validate")
+    public ResponseEntity<?> isTokenValid(HttpServletRequest request) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated()) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.status(401).build();
         }
-        return false;
     }
 }
